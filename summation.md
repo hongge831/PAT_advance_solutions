@@ -1,8 +1,10 @@
 
 # PAT_Advance_Practice Summation By YFF #
-[1003. Emergency (25)](https://www.patest.cn/contests/pat-a-practise/1003)
-　　
-　　s这道题是典型的Dijkstra算法的练习，常规思路。最短路径不止一条时需要对路径条数进行另外处理。
+
+### [1003. Emergency (25)](https://www.patest.cn/contests/pat-a-practise/1003)
+
+
+　　这道题是典型的Dijkstra算法的练习，常规思路。最短路径不止一条时需要对路径条数进行另外处理。
 ```C
 #include <stdio.h>
 #include <iostream>
