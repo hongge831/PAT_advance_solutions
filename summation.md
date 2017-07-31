@@ -10,12 +10,13 @@
 #include <iostream>
 #include <algorithm>
 #define inf 99999999
-#define M 501
+#define M 501//大小定义与系统堆栈有关
 using namespace std;
+int  edg[M][M];//这里涉及的空间数量比较大故需要定义为全局变量存储在系统数据区，避免运行时系统堆栈溢出
 int main(){
 	int n, m, c1, c2;//点数，边数，起点，终点
 	/*定义边集，距离集，某点最短路径的条数，点上的权重，任一点权重之和*/
-	int edg[M][M], dis[M], num[M], dotw[M], dotsum[M], path[M];//此题不需要path，但是为了联系加上path
+	int dis[M], num[M], dotw[M], dotsum[M], path[M];//此题不需要path，但是为了联系加上path
 	bool col[M];//初始值是true
 	cin >> n >> m >> c1 >> c2;
 	/*根据条件初始化各矩阵*/
@@ -78,8 +79,6 @@ int main(){
 		}
 	}
 	cout << num[c2] << ' ' << dotsum[c2];
-
-
 	return 0;
 }
 ```
