@@ -174,7 +174,7 @@ int main(){
 }
 ```
 
-### [101. Battle Over Cities (25)](https://www.patest.cn/contests/pat-a-practise/1013)
+### [1012. The Best Rank (25)](https://www.patest.cn/contests/pat-a-practise/1012)
 　　这道题关于排序需要注意几个细节，第一若排名相同的情况下一定要根据题意确定有无并列。比如，只能出现排名为1 1 3 4的情况。另外遇到这种复杂的排序题一定要使用sort算法更加简便。
 ```c++
 #include <stdio.h>
