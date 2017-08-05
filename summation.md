@@ -173,3 +173,154 @@ int main(){
 	return 0;
 }
 ```
+
+### [101. Battle Over Cities (25)](https://www.patest.cn/contests/pat-a-practise/1013)
+　　这道题关于排序需要注意几个细节，第一若排名相同的情况下一定要根据题意确定有无并列。比如，只能出现排名为1 1 3 4的情况。另外遇到这种复杂的排序题一定要使用sort算法更加简便。
+```c++
+#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+using namespace std;
+int flag = -1;
+//if the question relate to search in big scale ,array is one of the best choice
+int searchArr[10000000] = { 0 };
+char searchArr2[10000000] = { ' ' };
+char c[4] = { 'A', 'C', 'M', 'E' };
+struct info{
+	int id;
+	int socre[4];
+	int rank[4];
+};
+bool cmp(const info a, const info b){
+	return a.socre[flag] > b.socre[flag];
+}
+
+int main(){
+	int n, m;
+	cin >> n >> m;
+	vector<info> v(n);
+	/*input the data*/
+	float sum = 0;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> v[i].id;
+		for (int j = 0; j < 3; j++)
+		{
+			cin >> v[i].socre[j + 1];
+			sum += v[i].socre[j + 1];
+		}
+		v[i].socre[0] = (sum) / 3 + 0.5;//round the average
+		sum = 0;
+	}
+	/*compute the rank of each subject*/
+	for (int i = 0; i < 4; i++)
+	{
+		flag = i;
+		sort(v.begin(), v.end(), cmp);
+		v[0].rank[i] = 1;
+		for (int j = 1; j < n; j++)
+		{
+			//if the same sore, skip the same rank
+			if (v[j].socre[i] != v[j - 1].socre[i]){
+				v[j].rank[i] = j + 1;
+			}
+			else{
+				v[j].rank[i] = v[j - 1].rank[i];
+			}
+		}
+	}
+	/*prepare the search operation*/
+	int best = n + 1, loc = 0;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			//find the best rank by the order of A C M E
+			if (v[i].rank[j] < best){
+				best = v[i].rank[j];
+				loc = j;
+			}
+			else if (v[i].rank[j] == best){
+				if (j < loc){
+					loc = j;
+				}
+			}
+		}
+		searchArr[v[i].id] = best;
+		searchArr2[v[i].id] = c[loc];
+		//this step is most forgetable, be careful!!
+		best = n + 1;
+		loc = 0;
+	}
+	/*search the result*/
+	int searchId;
+	for (int i = 0; i < m; i++)
+	{
+		cin >> searchId;
+		if (searchArr[searchId] == 0){
+			printf("N/A\n");
+		}
+		else{
+			printf("%d %c\n", searchArr[searchId], searchArr2[searchId]);
+		}
+	}
+	return 0;
+}
+```
+### [1013. Battle Over Cities (25)](https://www.patest.cn/contests/pat-a-practise/1013)
+
+　　这也是一道典型的关于图遍历的题目，和之前两道（1003和1004）相比，这道题更加贴近原始的图遍历算法。如果将树也看作为一种特殊的图结构，那么树结构更适合用于链接表的存储方式，而图更加适合连接矩阵的存储方式。dfs的算法还需多联系。**另外**值得关注的点是有时候用**全局变量**会使得代码变短，但是调试的不能看到全局变量的变化情况。
+```c++
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+using namespace std;
+void dfs(int i, vector<vector<int>> &v, vector<bool> &isVisit){
+	int size = v[1].size();
+	isVisit[i] = true;
+	for (int j = 0; j < size; j++)
+	{
+		if (v[i][j] != 0 && isVisit[j] == false){
+			dfs(j, v, isVisit);
+		}
+	}
+
+}
+int main(){
+	int n, m, k;//n:total numbers of cities;m:numbers of roads;k:numbers of cities should be checked
+	cin >> n >> m >> k;
+	vector<vector<int>> v(n+1, vector<int>(n+1, 0));
+	vector<bool> isVisit(n+1, false);
+	int a, b;//the location of city in the map
+	/*initialize the map*/
+	for (int i = 0; i < m; i++)
+	{
+		cin >> a >> b;
+		v[a][b] = 1;
+		v[b][a] = 1;
+	}
+	/*DFS*/
+	int point, cnt = 0;
+	for (int i = 1; i <= k; i++)
+	{
+		cin >> point;
+		isVisit[point] = true;
+		for (int j = 1; j <= n; j++)
+		{
+			if (isVisit[j] == false){
+				dfs(j, v,isVisit);
+				cnt++;
+			}
+		}
+		isVisit[point] = false;
+		cout << cnt-1 << endl;
+		cnt = 0;
+		fill(isVisit.begin(), isVisit.end(), false);
+	}
+
+
+	return 0;
+}
+```
