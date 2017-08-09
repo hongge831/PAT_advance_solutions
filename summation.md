@@ -323,4 +323,8 @@ int main(){
 
 	return 0;
 }
-```
+``` 
+
+### [1014. Waiting in Line (30)](https://www.patest.cn/contests/pat-a-practise/1014)
+
+### [1016. Phone Bills (25)](https://www.patest.cn/contests/pat-a-practise/1016)
