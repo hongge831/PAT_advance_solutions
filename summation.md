@@ -327,4 +327,165 @@ int main(){
 
 ### [1014. Waiting in Line (30)](https://www.patest.cn/contests/pat-a-practise/1014)
 
+　　这种模拟类型的题目真的很烦心，没有一个很清晰的思路真的难以搞定。之前一直认为要模拟整个过程知道所有人都出队完毕。后来仔细一想觉得只要吧每个人入队完毕且计算他们的出队时间即可。这里非常值得注意的是每个信息都最好分开保存，多开个vector就多开个，思路清晰最重要，而不是以为追求精简的代码。嗯就是这样！！！**另外**针对这题有个非常值得注意的地方就是，所有人只要在17：:00之前被服务到，无论他的服务时间多长就可以！
+```c++
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+struct winQueue {
+	int popTime = 0, endTime = 0;//the first person end service time & last person end service time
+	queue<int> qu;
+};
+int main(){
+	int n, m, k, q, index = 1;
+	cin >> n >> m >> k >> q;
+	vector<int> Time(k + 1);
+	vector<winQueue> windows(n + 1);
+	vector<int> result(k + 1, 0);
+	vector<bool> isSorry(k + 1, false);
+	for (int i = 1; i <= k; i++)
+	{
+		cin >> Time[i];
+	}
+	/*initialize the queue inside the yellow line*/
+	for (int i = 1; i <= m; i++)
+	{
+		for (int j = 1; j <= n; j++)
+		{
+			if (index <= k){
+				windows[j].qu.push(Time[index]);
+				//time of first one in each queue is the popTime
+				if (i == 1){
+					windows[j].popTime = Time[index];
+				}
+				/*there should be very careful,when anyone can be served if thire start serve time is before 17.00*/
+				/*so the first one must be served even its time more than 540,before the first one push into the queue*/
+				/*the endtime of queue is zero*/
+				if (windows[j].endTime >= 540){
+					isSorry[index] = true;
+				}
+				windows[j].endTime += Time[index];
+				result[index] = windows[j].endTime;
+				index++;
+			}
+		}
+	}
+
+	/*if k>m*n we should take the additional people into consideration*/
+	while (index <= k){
+		int minPopTime = windows[1].popTime, minNumWin = 1;
+		/*find the minimun popTime then pop it*/
+		for (int i = 2; i <= n; i++)
+		{
+			if (windows[i].popTime < minPopTime){
+				minPopTime = windows[i].popTime;
+				minNumWin = i;
+			}
+		}
+		/*pop & push operation*/
+		windows[minNumWin].qu.pop();
+		windows[minNumWin].popTime += windows[minNumWin].qu.front();//update the popTime
+		windows[minNumWin].qu.push(Time[index]);
+		if (windows[minNumWin].endTime >= 540){
+			isSorry[index] = true;
+		}windows[minNumWin].endTime += Time[index];
+		result[index] = windows[minNumWin].endTime;
+		index++;
+	}
+	/*query the result*/
+	int temp;
+	for (int i = 0; i < q; i++)
+	{
+		cin >> temp;
+		if (isSorry[temp] == true){
+			printf("Sorry\n");
+		}
+		else{
+			printf("%02d:%02d\n", result[temp] / 60 + 8, result[temp] % 60);
+		}
+	}
+	return 0;
+}
+```
+
 ### [1016. Phone Bills (25)](https://www.patest.cn/contests/pat-a-practise/1016)
+
+　　这道题也是很揪心的一道题，总的来说也是一道很复杂的现实处理题。处理好每个细节很重要，特别是对map的使用特别值得记忆。
+```C++
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+#include <algorithm>
+using namespace std;
+int toll[25] = { 0 };//the additional one refer to the sum of others
+struct data{
+	string name;
+	int month, day, hour, min, status, totalTime;
+};
+bool cmp(data a, data b){
+	return a.name != b.name ? a.name < b.name : a.totalTime < b.totalTime;
+}
+float computeMoney(data a){
+	float re = 0.0;
+	re += a.day * 60 * toll[24] + toll[a.hour] * a.min;
+	for (int i = 0; i < a.hour; i++)
+	{
+		re += toll[i]*60;
+	}
+	return re / 100;
+}
+int main(){
+	/*initialize the toll arr*/
+	for (int i = 0; i < 24; i++)
+	{
+		cin >> toll[i];
+		toll[24] += toll[i];
+	}
+	/*input the information of customer's active*/
+	int n;
+	string temp;
+	cin >> n;
+	vector<data> v(n);
+	for (int i = 0; i < n; i++)
+	{
+		cin >> v[i].name;
+		scanf_s("%d:%d:%d:%d", &v[i].month, &v[i].day, &v[i].hour, &v[i].min);
+		v[i].totalTime = v[i].day * 24 * 60 + v[i].hour * 60 + v[i].min;
+		cin >> temp;
+		v[i].status = temp == "on-line" ? 1 : 0;
+	}
+	/*sort the customer's arr*/
+	sort(v.begin(), v.end(), cmp);
+	/*select the right combination insert the map*/
+	map<string, vector<data>> mp;
+	map<string, vector<data>>::iterator it;
+	for (int i = 1; i < n; i++)
+	{
+		if (v[i - 1].name == v[i].name &&v[i - 1].status == 1 && v[i].status == 0){
+			mp[v[i - 1].name].push_back(v[i - 1]);
+			mp[v[i - 1].name].push_back(v[i]);
+		}
+	}
+	float t = 0.0, totalMoney = 0.0;
+	int time;
+	for (it = mp.begin(); it != mp.end(); it++)
+	{
+		printf("%s %02d\n", it->first.c_str(), it->second[0].month);
+		for (int i = 0; i < it->second.size(); i += 2)
+		{
+			time = it->second[i + 1].totalTime - it->second[i].totalTime;
+			t = computeMoney(it->second[i + 1]) - computeMoney(it->second[i]);
+			printf("%02d:%02d:%02d %02d:%02d:%02d %d $%.2f\n", it->second[i].day, it->second[i].hour, it->second[i].min, it->second[i + 1].day, it->second[i + 1].hour, it->second[i + 1].min, time, t);
+			totalMoney += t;
+		}
+		printf("Total amount: $%.2f\n", totalMoney);
+		totalMoney = 0.0;
+
+	}
+	return 0;
+}
+```
