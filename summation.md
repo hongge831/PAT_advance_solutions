@@ -489,3 +489,6 @@ int main(){
 	return 0;
 }
 ```
+### [1017. Deepest Root (25)](https://www.patest.cn/contests/pat-a-practise/1017)
+
+　　并查集和树的最长根应用，第一次运用并查集，学到了。另外这道题不能用邻接矩阵表示图，会超时。这里需要复习一下邻接矩阵和邻接表的DFS算法区别。写了好几次DFS感觉还是不熟练。
