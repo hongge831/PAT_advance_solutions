@@ -589,3 +589,7 @@ int main(){
 }
 
 ```
+
+### [1022. Digital Library (30)](https://www.patest.cn/contests/pat-a-practise/1022)
+
+　　这道题我想法还是很巧妙的，需要把每一个相关的query和ID关联起来，所以只需要把输入的每个属性作为map的key即可。
