@@ -12,7 +12,7 @@ int main(){
 			tCount++;
 		}
 		if (str[i] == 'A'){
-			atCount = (atCount + tCount) % 1000000007;
+			atCount = (atCount + tCount) % 1000000007;//be careful
 		}
 		if (str[i] == 'P'){
 			patCount = (patCount + atCount) % 1000000007;
