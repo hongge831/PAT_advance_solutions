@@ -590,6 +590,9 @@ int main(){
 
 ```
 
+### [1018. Public Bike Management (30)](https://www.patest.cn/contests/pat-a-practise/1018)
+
+
 ### [1022. Digital Library (30)](https://www.patest.cn/contests/pat-a-practise/1022)
 
 　　这道题我想法还是很巧妙的，需要把每一个相关的query和ID关联起来，所以只需要把输入的每个属性作为map的key即可。**另外，很重要的一点是，如果以后用到函数应用，参数一定要用引用类型，否则容易超时**
