@@ -787,5 +787,76 @@ int main(){
 　　/*贪心思想：0.寻找比自己距离远的，到能够到达的最大距离之间的加油站，看他们的油价。如果找到了更低价格的油价，就加油到刚好能到达那个加油站的距离的油，然后去那个更低价格的加油站（有更低的我一分都不想多花在别的距离上，只加到刚好满足更低价格的加油站的距离就行，那样以后的路程我就可以以更低的价格行驶啦）
 　　1.如果找不到更低的，就找尽可能低的油价的加油站，在当前加油站加满油之后过去。因为想要让路程上使用的尽可能是低价的油，既然没有比当前更低价格的了，就让油箱加到最大值，这样能保证利益最大化，保证最大的距离使用的是便宜的油。*/
 ```c++
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#define inf 999999
+using namespace std;
+struct data{
+	double price, dis;
+};
+vector<data> v;
+bool cmp(data &a, data &b){
+	return a.dis < b.dis;
+}
+int main(){
+	/*data input & sort*/
+	int cmax, d, davg, n;
+	cin >> cmax >> d >> davg >> n;
+	v.resize(n + 1);
+	v[0].dis = d;
+	v[0].price = 0.0;
+	for (int i = 1; i <= n; i++)
+	{
+		scanf_s("%lf %lf", &v[i].price, &v[i].dis);
+	}
+	sort(v.begin(), v.end(), cmp);
+	/*begin greedy algorithm*/
+	if (v[0].dis != 0){
+		printf("The maximum travel distance = 0.00");
+		return 0;
+	}
+	else{
+		double totalPrice = 0.0, nowPrice = v[0].price, nowDis = 0.0, leftDis = 0.0, maxDis = 0.0;
+		while (nowDis < d){
+			double minDis = 0, minPrice = inf;
+			int flag = 0;//erroeable place
+			maxDis = nowDis + cmax * davg;
+			for (int i = 1; i <= n && v[i].dis <= maxDis; i++)
+			{
+				if (nowDis >= v[i].dis)continue;
+				if (v[i].price < nowPrice){
+					totalPrice += nowPrice * (v[i].dis - nowDis - leftDis) / davg;
+					leftDis = 0.0;//fogetable
+					nowDis = v[i].dis;
+					nowPrice = v[i].price;
+					flag = 1;
+					break;
+				}
+				/*find the cheapest gas station*/
+				if (v[i].price < minPrice){
+					minPrice = v[i].price;
+					minDis = v[i].dis;
+				}
+			}
+			/*there is no station in front of nowStation*/
+			if (flag == 0 && minPrice == inf){
+				/*there is no need totalPrice*/
+				maxDis = nowDis + cmax * davg;
+				printf("The maximum travel distance = %.2lf",maxDis);
+				return 0;
+			}
+			if (flag == 0 && minPrice != inf){
+				totalPrice += (cmax - leftDis / davg)*nowPrice;
+				leftDis = nowDis + cmax * davg - minDis;
+				nowPrice = minPrice;
+				nowDis = minDis;
+			}
+		}
+		printf("%.2lf",totalPrice);
+	}
 
+	return 0;
+}
 ```
