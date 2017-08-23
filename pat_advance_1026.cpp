@@ -38,8 +38,8 @@ int findVip(int vipIndex){
 	}
 	return vipIndex;
 }
-
 int main(){
+	/*data input & sort*/
 	int n, k, m;
 	cin >> n;
 	int hh, mm, ss, ptime, vipTemp;
@@ -48,17 +48,16 @@ int main(){
 	{
 		scanf_s("%d:%d:%d %d %d", &hh, &mm, &ss, &ptime, &vipTemp);
 		personTemp.arrivTime = hh * 3600 + mm * 60 + ss;
-		personTemp.startTime = 21 * 3600;
 		if (personTemp.arrivTime >= 21 * 3600)
 			continue;
-		personTemp.p = ptime <= 120 ? ptime * 60 : 7200;//errorable
+		personTemp.startTime = 21 * 3600;
+		personTemp.p = ptime <= 120 ? ptime * 60 : 7200;//errorable:the unit of time is minutes
 		personTemp.isVip = ((vipTemp == 1) ? true : false);
-
 		player.push_back(personTemp);
 	}
 	cin >> k >> m;
 	table.resize(k + 1);
-	int tableNum;
+	int tableNum;//the total number of table
 	for (int i = 0; i < m; i++)
 	{
 		scanf_s("%d", &tableNum);
@@ -73,28 +72,29 @@ int main(){
 		int index = -1, minEndTime = inf;
 		for (int j = 1; j <= k; j++)
 		{
-			//find the earlist table
+			//find the earlist endtime table
 			if (table[j].endTime < minEndTime){
 				minEndTime = table[j].endTime;
 				index = j;
 			}
 		}
 		/*the club is ended*/
-		if (table[index].endTime >= 21 * 3600)//errorable
+		if (table[index].endTime >= 21 * 3600)//errorable:endtime can not exceed 21:00
 			break;
 		/*skip the vip who has entered the club*/
-		if (player[i].isVip == true && i < vipIndex){
-			i++;
-			continue;
-
+		if (player[i].isVip == true){
+			if (i < vipIndex){
+				i++;
+				continue;
+			}
+			else if (i == vipIndex){
+				vipIndex = findVip(vipIndex);
+			}
 		}
 		/*begin queuing by different situations*/
 		if (table[index].tbVip == true){
 			if (player[i].isVip == true){
 				arrange(i, index);
-				if (i == vipIndex){
-					vipIndex = findVip(vipIndex);
-				}
 				i++;
 			}
 			else{
@@ -113,7 +113,7 @@ int main(){
 				arrange(i, index);
 				i++;
 			}
-			/*person is vip*/
+			/*if the person is vip, he only choose the vip table, when there is a vip table*/
 			else{
 				int vipTableIndex = -1, minVipEndTime = inf;
 				for (int j = 1; j <= k; j++)
@@ -123,26 +123,16 @@ int main(){
 						vipTableIndex = j;
 					}
 				}
-
 				if (vipTableIndex != -1 && player[i].arrivTime >= table[vipTableIndex].endTime){
 					arrange(i, vipTableIndex);
-					if (i == vipIndex){
-						vipIndex = findVip(vipIndex);
-					}
 					i++;
 				}
 				else{
-					arrange(i, index);
-					if (i == vipIndex){
-						vipIndex = findVip(vipIndex);
-					}
+					arrange(i, index);					
 					i++;
 				}
-
 			}
-
 		}
-
 	}
 	sort(player.begin(), player.end(), cmp2);
 	for (int i = 0; i < player.size() && player[i].startTime < 21 * 3600; i++)
@@ -156,6 +146,5 @@ int main(){
 			printf(" ");
 		printf("%d", table[i].num);
 	}
-
 	return 0;
 }
