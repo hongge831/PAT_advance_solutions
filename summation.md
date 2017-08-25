@@ -1152,3 +1152,4 @@ int main(){
 }
 
 ```
+### [1040. Longest Symmetric String (25)](https://www.patest.cn/contests/pat-a-practise/1040)
