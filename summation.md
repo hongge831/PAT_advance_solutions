@@ -1239,3 +1239,107 @@ int main(){
 	return 0;
 }
 ```
+### [1044. Shopping in Mars (25)](https://www.patest.cn/contests/pat-a-practise/1044)
+　　对于二分法查找数据的中心点mid更新问题，今天有了新的认识。以前都是将mid更新为left+1或者right+1，这当然没什么问题对于单纯的查找元素来说。但是，如果针对1044这道题来说，如果我们的情况是：只要求找到>=m的位置，那么mid在向右更新时需要将min更新为right而不是right+1，否则将可能出现找不到>=m的位置。
+```c++
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+using namespace std;
+vector<int> v, result;
+int mmin, m;
+int findValue(int i, int &right){
+	int left = i;
+	while (left < right){
+		int mid = (left + right) / 2;
+		if (v[mid] - v[i - 1] >= m){
+			right = mid;//errorable place, it's different from finding value
+		}
+		else{
+			left = mid + 1;
+		}
+	}
+	return v[right] - v[i - 1];
+}
+int main(){
+	/*data input*/
+	int n, temp, sum = 0;
+	cin >> n >> m;
+	v.resize(n + 1);
+	for (int i = 1; i <= n; i++)
+	{
+		scanf_s("%d", &temp);
+		sum += temp;
+		v[i] = sum;
+	}
+	/*algorithm begin*/
+	int j, res = 0;
+	mmin = v[n];//OR set the mmin's initial value >10^e8
+	for (int i = 1; i <= n; i++)
+	{
+		j = n;
+		res = findValue(i, j);//binary search
+		if (res >= m){
+			if (res > mmin)//remove the res that larger than mmin
+				continue;
+			if (res < mmin){
+				mmin = res;
+				result.clear();
+			}
+			result.push_back(i);
+			result.push_back(j);
+		}
+	}
+	/*print result*/
+	for (int i = 1; i < result.size(); i += 2)
+	{
+		printf("%d-%d\n", result[i - 1], result[i]);
+	}
+	return 0;
+}
+```
+### [1045. Favorite Color Stripe (30)](https://www.patest.cn/contests/pat-a-practise/1045)
+　　这是一道动态规划的题目，今天下午（2017年9月1日）把动态规划典型的面试题也顺带学习了一下，不禁感叹动态规划实在太厉害了。本题是动态规划最为简单的一种形式（求最大递增子列长度）。所以思路也就显而易见了，只需要把颜色按照顺序重新编号，剔除给定序列中不包含想要序列中的颜色并且重新编号。然后按照顺序求最大子列长度。
+```c++
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+int color[201];
+vector<int> v,dp;
+int main(){
+	int n, m, l;
+	cin >> n >> m;
+	int temp;
+	for (int i = 1; i <= m; i++)
+	{
+		scanf_s("%d",&temp);
+		color[temp] = i;
+	}
+	cin >> l;
+	for (int i = 0; i < l; i++)
+	{
+		scanf_s("%d",&temp);
+		if (color[temp] != 0){
+			v.push_back(color[temp]);
+		}
+	}
+	/*dynamic procedure begin*/
+	dp.resize(v.size());
+	int ans = 0;
+	for (int i = 0; i < v.size(); i++)
+	{
+		dp[i] = 1;
+		for (int j = 0; j < i; j++)
+		{
+			if (v[i] >= v[j]){
+				dp[i] = max(dp[j]+1,dp[i]);
+			}
+		}
+		ans = max(ans,dp[i]);	
+	}
+	printf("%d",ans);
+	return 0;
+}
+```
