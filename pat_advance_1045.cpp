@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 int color[201];
-vector<int> v,dp;
+vector<int> v,dp;//when time is sparse, use arr instead of vector, arr is time saver
 int main(){
 	int n, m, l;
 	cin >> n >> m;
