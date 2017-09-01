@@ -9,7 +9,7 @@ int findValue(int i, int &right){
 	while (left < right){
 		int mid = (left + right) / 2;
 		if (v[mid] - v[i - 1] >= m){
-			right = mid;//errorable place
+			right = mid;//errorable place, it's different from finding value
 		}
 		else{
 			left = mid + 1;
@@ -30,13 +30,13 @@ int main(){
 	}
 	/*algorithm begin*/
 	int j, res = 0;
-	mmin = v[n];
+	mmin = v[n];//OR set the mmin's initial value >10^e8
 	for (int i = 1; i <= n; i++)
 	{
 		j = n;
 		res = findValue(i, j);//binary search
 		if (res >= m){
-			if (res > mmin)
+			if (res > mmin)//remove the res that larger than mmin
 				continue;
 			if (res < mmin){
 				mmin = res;
