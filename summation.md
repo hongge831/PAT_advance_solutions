@@ -1382,3 +1382,5 @@ int main(){
 	return 0;
 }
 ```
+### [1053. Path of Equal Weight (30)](https://www.patest.cn/contests/pat-a-practise/1053)
+　　方法类似1018和1030。
