@@ -1384,3 +1384,77 @@ int main(){
 ```
 ### [1053. Path of Equal Weight (30)](https://www.patest.cn/contests/pat-a-practise/1053)
 　　方法类似1018和1030。
+### [1058. A+B in Hogwarts (20)](https://www.patest.cn/contests/pat-a-practise/1058)
+　　这道题涉及**树状数组**，相当厉害的一种数据结构。对于理解，一定要把图和测试用例结合起来理解。
+　　分析：用排序查询的方法会超时！用树状数组，即求第k = (s.size() + 1) / 2大的数。查询小于等于x的数的个数是否等于k的时候用二分法更快~
+```c++
+#include <stdio.h>
+#include <iostream>
+#include <stack>
+#define M 100001
+#define lowbit(i) i&(-i)
+using namespace std;
+int c[M];
+stack<int> s;
+void update(int index, int v){
+	for (int i = index; i < M; i += lowbit(i))
+	{
+		c[i] += v;
+	}
+}
+int getSum(int index){
+	int sum = 0;
+	for (int i = index; i >0; i-=lowbit(i))
+	{
+		sum += c[i];
+	}
+	return sum;
+}
+void peek(){
+	int left = 0, right = M, mid, k = (s.size() + 1) / 2;
+	while (left<right){
+		mid = (left + right) / 2;
+		if (getSum(mid) >= k){
+			right = mid;
+		} else{
+			left = mid + 1;
+		}
+	}
+	printf("%d\n",left);
+}
+
+int main(){
+	int n, value;
+	char str[10];
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		scanf_s("%s", str, 10);
+		/*if str == "pop","push","peekmedian"*/
+		if (str[1] == 'u'){
+			scanf_s("%d", &value);
+			s.push(value);
+			update(value, 1);
+		}
+		else if (str[1] == 'o'){
+			if (!s.empty()){
+				printf("%d\n", s.top());
+				update(s.top(), -1);
+				s.pop();
+			}
+			else{
+				printf("Invalid\n");
+			}
+		}
+		else{
+			if (!s.empty()){
+				peek();
+			}
+			else{
+				printf("Invalid\n");
+			}
+		}
+	}
+	return 0;
+}
+```
