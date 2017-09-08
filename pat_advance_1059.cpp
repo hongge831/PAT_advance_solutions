@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
-#define M 100000
+#define M 100000//M is just a scale,can try several times
 using namespace std;
 int prime[M];
 int main(){
@@ -28,7 +28,9 @@ int main(){
 			num /= i;
 			f = 1;
 		}
+		/*f means there is at least one prime component*/
 		if (f){
+			/*flag means there are more than 2 components*/
 			if (flag){
 				printf("*");
 			}
